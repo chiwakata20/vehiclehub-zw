@@ -1,0 +1,3 @@
+import type {Metadata} from "next"; import {SellVehicleForm} from "@/components/forms/SellVehicleForm";
+export const metadata:Metadata={title:"Sell your vehicle"};
+export default function SellPage(){return <section className="bg-slate-50 py-12 sm:py-16"><div className="mx-auto max-w-4xl px-4 sm:px-6"><div className="mb-8 max-w-2xl"><p className="eyebrow">Reach buyers across Zimbabwe</p><h1 className="text-4xl font-black tracking-tight sm:text-5xl">List your vehicle.</h1><p className="mt-3 leading-7 text-slate-500">Share the basic details below. Every listing is reviewed before it appears on VehicleHub.</p></div><SellVehicleForm/></div></section>}
