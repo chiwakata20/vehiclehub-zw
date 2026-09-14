@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { vehicles } from "@/data/vehicles";
@@ -7,6 +8,20 @@ import { filterVehicles } from "@/lib/filter-vehicles";
 import { VehicleCard } from "@/components/vehicles/VehicleCard";
 
 export function VehicleCatalogue() {
+  return (
+    <Suspense
+      fallback={
+        <div className="py-12 text-center text-slate-600" role="status">
+          Loading vehicles…
+        </div>
+      }
+    >
+      <VehicleCatalogueContent />
+    </Suspense>
+  );
+}
+
+function VehicleCatalogueContent() {
   const searchParams = useSearchParams();
 
   const filteredVehicles = filterVehicles(vehicles, {
@@ -22,7 +37,6 @@ export function VehicleCatalogue() {
         <h2 className="text-3xl font-black text-slate-950">
           Available vehicles
         </h2>
-
         <p className="mt-2 text-slate-600" aria-live="polite">
           {filteredVehicles.length === 1
             ? "1 vehicle found"
@@ -33,10 +47,7 @@ export function VehicleCatalogue() {
       {filteredVehicles.length > 0 ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredVehicles.map((vehicle) => (
-            <VehicleCard
-              key={vehicle.id}
-              vehicle={vehicle}
-            />
+            <VehicleCard key={vehicle.id} vehicle={vehicle} />
           ))}
         </div>
       ) : (
@@ -44,7 +55,6 @@ export function VehicleCatalogue() {
           <h2 className="text-2xl font-black text-slate-950">
             No matching vehicles found
           </h2>
-
           <p className="mt-3 text-slate-600">
             Change one or more filters and search again.
           </p>

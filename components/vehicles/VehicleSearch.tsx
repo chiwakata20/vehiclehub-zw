@@ -1,7 +1,7 @@
 "use client";
 
+import { Suspense, useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -55,6 +55,14 @@ const priceOptions = [
 ];
 
 export function VehicleSearch() {
+  return (
+    <Suspense fallback={<VehicleSearchFallback />}>
+      <VehicleSearchContent />
+    </Suspense>
+  );
+}
+
+function VehicleSearchContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -77,27 +85,14 @@ export function VehicleSearch() {
 
     const params = new URLSearchParams();
 
-    if (category) {
-      params.set("category", category);
-    }
-
-    if (make) {
-      params.set("make", make);
-    }
-
-    if (location) {
-      params.set("location", location);
-    }
-
-    if (maxPrice) {
-      params.set("maxPrice", maxPrice);
-    }
+    if (category) params.set("category", category);
+    if (make) params.set("make", make);
+    if (location) params.set("location", location);
+    if (maxPrice) params.set("maxPrice", maxPrice);
 
     const queryString = params.toString();
 
-    router.push(
-      queryString ? `/vehicles?${queryString}` : "/vehicles",
-    );
+    router.push(queryString ? `/vehicles?${queryString}` : "/vehicles");
   }
 
   function handleClear() {
@@ -108,6 +103,13 @@ export function VehicleSearch() {
 
     router.push("/vehicles");
   }
+
+  const hasActiveFilters = Boolean(
+    searchParams.get("category") ||
+      searchParams.get("make") ||
+      searchParams.get("location") ||
+      searchParams.get("maxPrice"),
+  );
 
   return (
     <form
@@ -167,7 +169,7 @@ export function VehicleSearch() {
         </button>
       </div>
 
-      {pathname === "/vehicles" && searchParams.toString() && (
+      {pathname === "/vehicles" && hasActiveFilters && (
         <button
           type="button"
           onClick={handleClear}
@@ -177,6 +179,18 @@ export function VehicleSearch() {
         </button>
       )}
     </form>
+  );
+}
+
+function VehicleSearchFallback() {
+  return (
+    <div
+      className="rounded-2xl bg-white p-6 text-slate-600 shadow-2xl"
+      role="status"
+      aria-live="polite"
+    >
+      Loading vehicle search…
+    </div>
   );
 }
 
